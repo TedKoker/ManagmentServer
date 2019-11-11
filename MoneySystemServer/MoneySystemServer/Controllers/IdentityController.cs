@@ -45,5 +45,24 @@ namespace MoneySystemServer.Controllers
                 Token = authResponse.Token
             });
         }
+
+        [HttpPost(ApiRoutes.Identity.LogIn)]
+        public async Task<IActionResult> Login([FromBody] UserLogInRequest request)
+        {
+            var authResponse = await IdentityService.LoginAsync(request.Email, request.Password);
+
+            if (!authResponse.Sucsses)
+            {
+                return BadRequest(new AouthResponseFaile
+                {
+                    Errors = authResponse.Errors
+                });
+            }
+
+            return Ok(new AuthSucssesResponse
+            {
+                Token = authResponse.Token
+            });
+        }
     }
 }

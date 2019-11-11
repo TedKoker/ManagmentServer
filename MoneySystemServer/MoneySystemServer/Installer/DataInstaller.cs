@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MoneySystemServer.Data;
+using MoneySystemServer.Services;
 
 namespace MoneySystemServer.Installer
 {
@@ -19,6 +20,8 @@ namespace MoneySystemServer.Installer
                     configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddScoped<IMoneyService, MoneyService>();
         }
     }
 }

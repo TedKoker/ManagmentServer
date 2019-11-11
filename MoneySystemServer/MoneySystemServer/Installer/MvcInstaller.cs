@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using MoneySystemServer.Contacts.Requests;
+using MoneySystemServer.Models;
 using MoneySystemServer.Options;
 using MoneySystemServer.Services;
 
@@ -33,6 +36,8 @@ namespace MoneySystemServer.Installer
                     .AllowCredentials();
                 });
             });
+            //services.AddAutoMapper(new Type[] { typeof(UserMoneyDetaleResponse), typeof(MoneyDetale), typeof(UserMoneyDetaleRequest) }); //typeof(UserMoneyDetaleResponse),typeof(MoneyDetale),typeof(UserMoneyDetaleRequest)
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllersWithViews();
             services.AddRazorPages();
 

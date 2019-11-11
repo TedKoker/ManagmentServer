@@ -9,5 +9,6 @@ namespace MoneySystemServer.Services
     public interface IIdentityService
     {
         Task<AouthenticationResoult> RegisterAsync(string email, string password);
+        Task<AouthenticationResoult> LoginAsync(string email, string paswoord);
     }
 }
