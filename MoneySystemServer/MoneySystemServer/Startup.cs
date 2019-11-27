@@ -56,8 +56,8 @@ namespace MoneySystemServer
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseCors(c=>c.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseHttpsRedirection();
+            app.UseCors("_myAllowSpecificOrigins"); //c=>c.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
 
             app.UseEndpoints(endpoints =>
             {

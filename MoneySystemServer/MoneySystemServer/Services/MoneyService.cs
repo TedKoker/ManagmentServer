@@ -7,7 +7,7 @@ using MoneySystemServer.Models;
 using Microsoft.EntityFrameworkCore;
 using MoneySystemServer.Contacts.Requests;
 using AutoMapper;
-
+using Microsoft.AspNetCore.Cors;
 
 namespace MoneySystemServer.Services
 {
@@ -21,7 +21,7 @@ namespace MoneySystemServer.Services
             Mapper = mapper;
         }
 
-        public async Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber)
+        public async Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber, int page)
         {
             if (monthNumber == null)
             {
@@ -31,10 +31,54 @@ namespace MoneySystemServer.Services
                 .Where(x => x.UserId == userId.ToString())
                 .Where(x => x.Date.Month == monthNumber)
                 .ToListAsync();
+            
             List<UserMoneyDetaleResponse> userMoneyDetaleResponses = new List<UserMoneyDetaleResponse>();
-            foreach(MoneyDetale moneyDetale in moneyDetales)
+
+            
+            OrderLinqList firstItam = new OrderLinqList() 
+            { 
+                UserMoneyDetaleResponse = Mapper.Map<UserMoneyDetaleResponse>(moneyDetales[0]) 
+            };
+
+            for(int i=1; i<moneyDetales.Count; i++)
             {
-                userMoneyDetaleResponses.Add(Mapper.Map<UserMoneyDetaleResponse>(moneyDetale));
+                OrderLinqList currentItam = firstItam;
+                bool addedToEnd = false;
+                while(moneyDetales[i].Date.Day>=currentItam.UserMoneyDetaleResponse.Date.Day && !addedToEnd)
+                {
+                    if (currentItam.SonNode == null)
+                    {
+                        currentItam.SonNode = new OrderLinqList(currentItam, null)
+                        {
+                            UserMoneyDetaleResponse = Mapper.Map<UserMoneyDetaleResponse>(moneyDetales[i])
+                        };
+
+                        addedToEnd = true;
+                    }
+                    else
+                    {
+                        currentItam = currentItam.SonNode;
+                    }
+                }
+                if (!addedToEnd)
+                {
+                    currentItam = new OrderLinqList(currentItam.FatherNode, currentItam)
+                    {
+                        UserMoneyDetaleResponse = Mapper.Map<UserMoneyDetaleResponse>(moneyDetales[i])
+                    };
+
+                    if (currentItam.UserMoneyDetaleResponse.Date.Day < firstItam.UserMoneyDetaleResponse.Date.Day)
+                    {
+                        firstItam = currentItam;
+                    }
+                }
+            }
+
+            OrderLinqList nowItam = firstItam;
+            while (nowItam != null)
+            {
+                userMoneyDetaleResponses.Add(nowItam.UserMoneyDetaleResponse);
+                nowItam = nowItam.SonNode;
             }
 
             return userMoneyDetaleResponses;

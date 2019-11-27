@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,9 @@ using MoneySystemServer.Services;
 
 namespace MoneySystemServer.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] //(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)
+    // [EnableCors("_myAllowSpecificOrigins")]
+
     public class MoneyDetaleController : Controller
     {
         private readonly IMoneyService MoneyService;
@@ -27,18 +30,18 @@ namespace MoneySystemServer.Controllers
         [HttpGet(ApiRoutes.MoneyDetaleRoute.GetLastMonth)]
         public async Task<IActionResult> GetLastMonth()
         {
-            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext),null);
+            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext), null, 1);
             return Ok(userMoneyDetaleResponse);
         }
 
         [HttpGet(ApiRoutes.MoneyDetaleRoute.GetMonth)]
         public async Task<IActionResult> GetMonth([FromRoute] int month)
         {
-            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext), month);
+            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext), month, 1);
             return Ok(userMoneyDetaleResponse);
         }
 
-        [HttpPost(ApiRoutes.MoneyDetaleRoute.Post)]
+        [HttpPost(ApiRoutes.MoneyDetaleRoute.Post)] //ApiRoutes.MoneyDetaleRoute.Post
         public async Task<IActionResult> PostMonth([FromBody] UserMoneyDetaleRequest userMoneyDetaleRequest)
         {
             UserMoneyDetaleResponse userMoneyDetaleResponse = await MoneyService.PostMonth(userMoneyDetaleRequest, GeneralExtantions.GetUserId(HttpContext));
