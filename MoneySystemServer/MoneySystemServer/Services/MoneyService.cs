@@ -21,6 +21,14 @@ namespace MoneySystemServer.Services
             Mapper = mapper;
         }
 
+        public async Task<List<UserMoneyDetaleResponse>> DeleteMonthAsync(UserMoneyDetaleRequest moneyId, string userId)
+        {
+            MoneyDetale removeThis = Context.MoneyDetale.FirstOrDefault(x => x.Id == moneyId.Id);
+            Context.MoneyDetale.Remove(removeThis);
+            Context.SaveChanges();
+            return await GetMonthAsync(userId, moneyId.Date.Month, 1); 
+        }
+
         public async Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber, int page)
         {
             if (monthNumber == null)
@@ -29,56 +37,15 @@ namespace MoneySystemServer.Services
             }
             List<MoneyDetale> moneyDetales = await Context.MoneyDetale.Select(x => x)
                 .Where(x => x.UserId == userId.ToString())
-                .Where(x => x.Date.Month == monthNumber)
+                .Where(x => x.Date.Month == monthNumber-1)
+                .OrderBy(x=>x.Date)
                 .ToListAsync();
-            
+
             List<UserMoneyDetaleResponse> userMoneyDetaleResponses = new List<UserMoneyDetaleResponse>();
 
-            
-            OrderLinqList firstItam = new OrderLinqList() 
-            { 
-                UserMoneyDetaleResponse = Mapper.Map<UserMoneyDetaleResponse>(moneyDetales[0]) 
-            };
-
-            for(int i=1; i<moneyDetales.Count; i++)
+            foreach (MoneyDetale moneyDetale in moneyDetales)
             {
-                OrderLinqList currentItam = firstItam;
-                bool addedToEnd = false;
-                while(moneyDetales[i].Date.Day>=currentItam.UserMoneyDetaleResponse.Date.Day && !addedToEnd)
-                {
-                    if (currentItam.SonNode == null)
-                    {
-                        currentItam.SonNode = new OrderLinqList(currentItam, null)
-                        {
-                            UserMoneyDetaleResponse = Mapper.Map<UserMoneyDetaleResponse>(moneyDetales[i])
-                        };
-
-                        addedToEnd = true;
-                    }
-                    else
-                    {
-                        currentItam = currentItam.SonNode;
-                    }
-                }
-                if (!addedToEnd)
-                {
-                    currentItam = new OrderLinqList(currentItam.FatherNode, currentItam)
-                    {
-                        UserMoneyDetaleResponse = Mapper.Map<UserMoneyDetaleResponse>(moneyDetales[i])
-                    };
-
-                    if (currentItam.UserMoneyDetaleResponse.Date.Day < firstItam.UserMoneyDetaleResponse.Date.Day)
-                    {
-                        firstItam = currentItam;
-                    }
-                }
-            }
-
-            OrderLinqList nowItam = firstItam;
-            while (nowItam != null)
-            {
-                userMoneyDetaleResponses.Add(nowItam.UserMoneyDetaleResponse);
-                nowItam = nowItam.SonNode;
+                userMoneyDetaleResponses.Add(Mapper.Map<UserMoneyDetaleResponse>(moneyDetale));
             }
 
             return userMoneyDetaleResponses;
@@ -95,5 +62,7 @@ namespace MoneySystemServer.Services
             UserMoneyDetaleResponse userMoneyDetaleResponse = Mapper.Map<UserMoneyDetaleResponse>(money);
             return userMoneyDetaleResponse;
         }
+
+
     }
 }

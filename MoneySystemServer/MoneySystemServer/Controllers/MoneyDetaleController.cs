@@ -48,5 +48,12 @@ namespace MoneySystemServer.Controllers
             return Ok(userMoneyDetaleResponse);
         }
 
+        [HttpDelete(ApiRoutes.MoneyDetaleRoute.Delete)]
+        public async Task<IActionResult> DeleteMonth([FromBody] UserMoneyDetaleRequest userMoneyDetaleRequest)
+        {
+            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.DeleteMonthAsync(userMoneyDetaleRequest, GeneralExtantions.GetUserId(HttpContext));
+            return Ok(userMoneyDetaleResponse);
+        }
+
     }
 }

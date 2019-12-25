@@ -11,5 +11,6 @@ namespace MoneySystemServer.Services
     {
         Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber, int page);
         Task<UserMoneyDetaleResponse> PostMonth(UserMoneyDetaleRequest userMoneyDetaleRequest, string userId);
+        Task<List<UserMoneyDetaleResponse>> DeleteMonthAsync(UserMoneyDetaleRequest moneyId, string userId);
     }
 }

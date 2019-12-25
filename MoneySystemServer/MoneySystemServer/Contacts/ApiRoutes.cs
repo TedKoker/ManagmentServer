@@ -21,6 +21,7 @@ namespace MoneySystemServer.Contacts
             public const string GetLastMonth = Base + Controller;
             public const string GetMonth = Base + Controller+"/{month}";
             public const string Post = Base + Controller;
+            public const string Delete = Base + Controller;
         }
     }
 }

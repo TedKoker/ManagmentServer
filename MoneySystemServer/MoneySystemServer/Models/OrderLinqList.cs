@@ -35,13 +35,13 @@ namespace MoneySystemServer.Models
             }
         }
 
-        public void ChangeSon(OrderLinqList newSon)
+        private void ChangeSon(OrderLinqList newSon)
         {
             SonNode = newSon;
             GrandSon = newSon.SonNode;
         }
 
-        public void ChangeFather(OrderLinqList newFather)
+        private void ChangeFather(OrderLinqList newFather)
         {
             FatherNode = newFather;
             GrandFather = newFather.FatherNode;
