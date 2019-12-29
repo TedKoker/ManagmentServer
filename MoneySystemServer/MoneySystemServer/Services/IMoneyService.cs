@@ -9,7 +9,7 @@ namespace MoneySystemServer.Services
 {
     public interface IMoneyService
     {
-        Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber, int page);
+        Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber, int? year);
         Task<UserMoneyDetaleResponse> PostMonth(UserMoneyDetaleRequest userMoneyDetaleRequest, string userId);
         Task<List<UserMoneyDetaleResponse>> DeleteMonthAsync(UserMoneyDetaleRequest moneyId, string userId);
     }

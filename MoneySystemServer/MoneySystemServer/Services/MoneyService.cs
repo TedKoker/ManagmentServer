@@ -29,15 +29,19 @@ namespace MoneySystemServer.Services
             return await GetMonthAsync(userId, moneyId.Date.Month, 1); 
         }
 
-        public async Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber, int page)
+        public async Task<List<UserMoneyDetaleResponse>> GetMonthAsync(string userId, int? monthNumber, int? year)
         {
             if (monthNumber == null)
             {
                 monthNumber = DateTime.Now.Month;
             }
+            if (year == null)
+            {
+                year = DateTime.Now.Year;
+            }
             List<MoneyDetale> moneyDetales = await Context.MoneyDetale.Select(x => x)
                 .Where(x => x.UserId == userId.ToString())
-                .Where(x => x.Date.Month == monthNumber-1)
+                .Where(x => x.Date.Month == monthNumber && x.Date.Year == year)
                 .OrderBy(x=>x.Date)
                 .ToListAsync();
 

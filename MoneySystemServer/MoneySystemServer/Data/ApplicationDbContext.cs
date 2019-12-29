@@ -16,6 +16,7 @@ namespace MoneySystemServer.Data
         {
         }
         public DbSet<MoneyDetale> MoneyDetale { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     }
 }

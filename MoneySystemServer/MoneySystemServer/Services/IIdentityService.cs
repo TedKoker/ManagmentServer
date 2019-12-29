@@ -10,5 +10,6 @@ namespace MoneySystemServer.Services
     {
         Task<AouthenticationResoult> RegisterAsync(string email, string password);
         Task<AouthenticationResoult> LoginAsync(string email, string paswoord);
+        Task<AouthenticationResoult> RefreshTokenAsync(string token, string refreshToken);
     }
 }

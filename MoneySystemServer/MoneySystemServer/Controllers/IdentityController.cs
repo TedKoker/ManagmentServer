@@ -44,7 +44,8 @@ namespace MoneySystemServer.Controllers
 
             return Ok(new AuthSucssesResponse
             {
-                Token = authResponse.Token
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
             });
         }
 
@@ -63,7 +64,28 @@ namespace MoneySystemServer.Controllers
 
             return Ok(new AuthSucssesResponse
             {
-                Token = authResponse.Token
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
+            });
+        }
+
+        [HttpPost(ApiRoutes.Identity.Refresh)]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
+        {
+            var authResponse = await IdentityService.RefreshTokenAsync(request.Token, request.RefreshToken);
+
+            if (!authResponse.Sucsses)
+            {
+                return BadRequest(new AouthResponseFaile
+                {
+                    Errors = authResponse.Errors
+                });
+            }
+
+            return Ok(new AuthSucssesResponse
+            {
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
             });
         }
     }

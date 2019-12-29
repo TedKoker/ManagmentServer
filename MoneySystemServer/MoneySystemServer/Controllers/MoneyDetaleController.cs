@@ -30,14 +30,14 @@ namespace MoneySystemServer.Controllers
         [HttpGet(ApiRoutes.MoneyDetaleRoute.GetLastMonth)]
         public async Task<IActionResult> GetLastMonth()
         {
-            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext), null, 1);
+            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext), null, null);
             return Ok(userMoneyDetaleResponse);
         }
 
         [HttpGet(ApiRoutes.MoneyDetaleRoute.GetMonth)]
-        public async Task<IActionResult> GetMonth([FromRoute] int month)
+        public async Task<IActionResult> GetMonth([FromRoute] int month, [FromRoute] int year)
         {
-            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext), month, 1);
+            List<UserMoneyDetaleResponse> userMoneyDetaleResponse = await MoneyService.GetMonthAsync(GeneralExtantions.GetUserId(HttpContext), month, year);
             return Ok(userMoneyDetaleResponse);
         }
 
