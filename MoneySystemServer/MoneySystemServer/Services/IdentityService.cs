@@ -106,12 +106,13 @@ namespace MoneySystemServer.Services
             {
                 JwtId = token.Id,
                 UserId = newUser.Id,
+                User = newUser,
                 CreationDate = DateTime.UtcNow,
                 ExpiryDate = DateTime.UtcNow.AddMonths(6)
             };
 
-            await Context.RefreshTokens.AddAsync(refreshToken);
-            await Context.SaveChangesAsync();
+           Context.RefreshTokens.Add(refreshToken);
+           await Context.SaveChangesAsync();
 
             return new AouthenticationResoult
             {
@@ -140,7 +141,7 @@ namespace MoneySystemServer.Services
                 return new AouthenticationResoult { Errors = new[] { "This token hasn't expired yet" } };
             }
 
-            var jti = valditatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value;
+            var jti = valditatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
             var storedRefreshToken = Context.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken);
 
             if (storedRefreshToken == null)
@@ -183,7 +184,9 @@ namespace MoneySystemServer.Services
 
             try
             {
-                var principal = tokenHandler.ValidateToken(token, TokenValidationParameters, out var validateToken);
+                var tokenValidationParameters = TokenValidationParameters.Clone();
+                tokenValidationParameters.ValidateLifetime = false;
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var validateToken);
                 if (!IsJwtWithSecurityAlgoritm(validateToken))
                 {
                     return null;
